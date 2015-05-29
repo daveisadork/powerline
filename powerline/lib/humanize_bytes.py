@@ -13,13 +13,13 @@ def humanize_bytes(num, suffix='B', si_prefix=False):
 	Modified version from http://stackoverflow.com/questions/1094841
 	'''
 	if num == 0:
-		return '0 ' + suffix
+		return '0' + suffix
 	div = 1000 if si_prefix else 1024
 	exponent = min(int(log(num, div)) if num else 0, len(unit_list) - 1)
 	quotient = float(num) / div ** exponent
 	unit, decimals = unit_list[exponent]
 	if unit and not si_prefix:
 		unit = unit.upper() + 'i'
-	return ('{{quotient:.{decimals}f}} {{unit}}{{suffix}}'
+	return ('{{quotient:.{decimals}f}}{{unit}}{{suffix}}'
 		.format(decimals=decimals)
 		.format(quotient=quotient, unit=unit, suffix=suffix))
