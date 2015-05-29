@@ -120,9 +120,9 @@ internal_ip = with_docstring(internal_ip,
 Requires ``netifaces`` module to work properly.
 
 :param str interface:
-	Interface on which IP will be checked. Use ``auto`` to automatically 
-	detect interface. In this case interfaces with lower numbers will be 
-	preferred over interfaces with similar names. Order of preference based on 
+	Interface on which IP will be checked. Use ``auto`` to automatically
+	detect interface. In this case interfaces with lower numbers will be
+	preferred over interfaces with similar names. Order of preference based on
 	names:
 
 	#. ``eth`` and ``enp`` followed by number or the end of string.
@@ -131,7 +131,7 @@ Requires ``netifaces`` module to work properly.
 	#. Any other interface that is not ``lo*``.
 	#. ``lo`` followed by number or the end of string.
 :param int ipv:
-	4 or 6 for ipv4 and ipv6 respectively, depending on which IP address you 
+	4 or 6 for ipv4 and ipv6 respectively, depending on which IP address you
 	need exactly.
 ''')
 
@@ -240,13 +240,16 @@ class NetworkLoadSegment(KwThreadedSegment):
 			except ZeroDivisionError:
 				self.warn('Measure interval zero.')
 				value = 0
+			# if value == 0:
+			# 	continue
 			max_key = key + '_max'
 			is_gradient = max_key in kwargs
 			hl_groups = ['network_load_' + key, 'network_load']
 			if is_gradient:
 				hl_groups[:0] = (group + '_gradient' for group in hl_groups)
 			r.append({
-				'contents': format.format(value=humanize_bytes(value, suffix, si_prefix)),
+				#'contents': format.format(value=humanize_bytes(value, suffix, si_prefix)),
+				'contents': format,
 				'divider_highlight_group': 'background:divider',
 				'highlight_groups': hl_groups,
 			})
@@ -256,7 +259,8 @@ class NetworkLoadSegment(KwThreadedSegment):
 					r[-1]['gradient_level'] = 100
 				else:
 					r[-1]['gradient_level'] = value * 100.0 / max
-
+		# if len(r) is 2:
+		# 	r[1]['contents'] = ' %s' % r[1]['contents']
 		return r
 
 
@@ -268,17 +272,17 @@ falls back to reading
 :file:`/sys/class/net/{interface}/statistics/{rx,tx}_bytes`.
 
 :param str interface:
-	Network interface to measure (use the special value "auto" to have powerline 
+	Network interface to measure (use the special value "auto" to have powerline
 	try to auto-detect the network interface).
 :param str suffix:
 	String appended to each load string.
 :param bool si_prefix:
 	Use SI prefix, e.g. MB instead of MiB.
 :param str recv_format:
-	Format string that determines how download speed should look like. Receives 
+	Format string that determines how download speed should look like. Receives
 	``value`` as argument.
 :param str sent_format:
-	Format string that determines how upload speed should look like. Receives 
+	Format string that determines how upload speed should look like. Receives
 	``value`` as argument.
 :param float recv_max:
 	Maximum number of received bytes per second. Is only used to compute
