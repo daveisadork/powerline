@@ -30,9 +30,18 @@ class BranchSegment(Segment):
 						status = '?'
 					else:
 						status = status and status.strip()
+						if status:
+							if 'U' in status:
+								branch += ' +'
+							if 'D' in status:
+								status = 'branch_dirty'
+							else:
+								status = 'branch_clean'
+						else:
+							status = 'branch_clean'
 						if status in ignore_statuses:
 							status = None
-					scol.insert(0, 'branch_dirty' if status else 'branch_clean')
+					scol.insert(0, status)
 				return [{
 					'contents': branch,
 					'highlight_groups': scol,
@@ -44,14 +53,14 @@ branch = with_docstring(BranchSegment(),
 '''Return the current VCS branch.
 
 :param bool status_colors:
-	Determines whether repository status will be used to determine highlighting. 
+	Determines whether repository status will be used to determine highlighting.
 	Default: False.
 :param bool ignore_statuses:
-	List of statuses which will not result in repo being marked as dirty. Most 
-	useful is setting this option to ``["U"]``: this will ignore repository 
-	which has just untracked files (i.e. repository with modified, deleted or 
-	removed files will be marked as dirty, while just untracked files will make 
-	segment show clean repository). Only applicable if ``status_colors`` option 
+	List of statuses which will not result in repo being marked as dirty. Most
+	useful is setting this option to ``["U"]``: this will ignore repository
+	which has just untracked files (i.e. repository with modified, deleted or
+	removed files will be marked as dirty, while just untracked files will make
+	segment show clean repository). Only applicable if ``status_colors`` option
 	is True.
 
 Highlight groups used: ``branch_clean``, ``branch_dirty``, ``branch``.

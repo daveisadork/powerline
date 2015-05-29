@@ -66,6 +66,12 @@ def system_load(pl, format='{avg:.1f}', threshold_good=1, threshold_bad=2, track
 	return ret
 
 
+def system_load_compact(pl, format='{avg:.1f}', threshold_good=1, threshold_bad=2, track_cpu_count=False):
+	ret = [system_load(pl, format, threshold_good, threshold_bad, track_cpu_count)[0]]
+	ret[0]['contents'] = ret[0]['contents'].strip()
+	return ret
+
+
 try:
 	import psutil
 
@@ -73,7 +79,7 @@ try:
 		interval = 1
 
 		def update(self, old_cpu):
-			return psutil.cpu_percent(interval=None)
+			return psutil.cpu_percent(interval=1)
 
 		def run(self):
 			while not self.shutdown_event.is_set():
@@ -89,6 +95,7 @@ try:
 				'contents': format.format(cpu_percent),
 				'gradient_level': cpu_percent,
 				'highlight_groups': ['cpu_load_percent_gradient', 'cpu_load_percent'],
+				'divider_highlight_group': 'background:divider'
 			}]
 except ImportError:
 	class CPULoadPercentSegment(ThreadedSegment):
